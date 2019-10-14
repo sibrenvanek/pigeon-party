@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/sibrenvanek/pigeon-party/issues"
   },
-  "homepage": "https://github.com/sibrenvanek/pigeon-party#readme"
+  "homepage": "https://github.com/sibrenvanek/pigeon-party#readme",
+  "dependencies": {
+    "lodash": "^4.17.15"
+  }
 }
