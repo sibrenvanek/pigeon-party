@@ -14,6 +14,9 @@ app.use('/static', express.static(__dirname + '/static'));
 app.get('/', function (request, response) {
     response.sendFile(path.join(__dirname, 'pages/index.html'));
 });
+app.get('/overview', function (request, response) {
+    response.sendFile(path.join(__dirname, 'pages/overview.html'));
+});
 
 server.listen(port, function () {
     console.log(`🚀  Starting server on port ${port}`);

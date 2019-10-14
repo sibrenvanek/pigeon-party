@@ -40,8 +40,10 @@ var socket = io();
 socket.on('message', function (data) {
     console.log(data);
 });
+if(!document.URL.endsWith('overview')){
+    socket.emit('new player');
+}
 
-socket.emit('new player');
 setInterval(function () {
     socket.emit('movement', movement);
 }, 1000 / 60);
