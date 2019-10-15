@@ -42,9 +42,8 @@ io.on('connection', function (socket) {
         }
     });
     socket.on('movement', function (controller) {
-
         var player = players[socket.id] || {};
-
+        
         if (controller.up && player.jumping == false) 
         {
             player.y_velocity -= 20;
