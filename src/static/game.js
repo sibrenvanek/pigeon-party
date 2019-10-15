@@ -14,6 +14,36 @@ controller = {
     }
 };
 
+function buttonUp()
+{
+    controller.up = true;
+}
+
+function buttonUpEnd()
+{
+    controller.up = false;
+}
+
+function buttonLeft()
+{
+    controller.left = true;
+}
+
+function buttonLeftEnd()
+{
+    controller.left = false
+}
+
+function buttonRight()
+{
+    controller.right = true;
+}
+
+function buttonRightEnd()
+{
+    controller.right = false
+}
+
 var socket = io();
 socket.on('message', function (data) {
     console.log(data);
