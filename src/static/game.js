@@ -26,6 +26,7 @@ if (!document.URL.endsWith('overview')) {
     socket.emit('new player');
 }
 
+socket.emit('new player');
 setInterval(function () {
     socket.emit('movement', controller);
 }, 1000 / 60);
