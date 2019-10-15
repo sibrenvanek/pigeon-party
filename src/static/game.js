@@ -31,14 +31,9 @@ setInterval(function () {
     socket.emit('movement', controller);
 }, 1000 / 60);
 
-
-
-
-
 socket.on('state', function (players)
 {
     context.clearRect(0,0, 2048, 768);
-
     context.strokeStyle = "#202830";
     context.lineWidth = 4;
     context.beginPath();
