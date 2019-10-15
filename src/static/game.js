@@ -1,49 +1,21 @@
-var movement = {
-    up: false,
-    down: false,
+var rectangle, controller, context, loop;
+context = document.querySelector("canvas").getContext("2d");
+context.canvas.height = 768;
+context.canvas.width = 2048;
+
+controller = {
     left: false,
-    right: false
-}
-
-function buttonUp()
-{
-    movement.up = true;
-}
-
-function buttonUpEnd()
-{
-    movement.up = false;
-}
-
-function buttonDown()
-{
-    movement.down = true;
-}
-
-function buttonDownEnd()
-{
-    movement.down = false
-}
-
-function buttonLeft()
-{
-    movement.left = true;
-}
-
-function buttonLeftEnd()
-{
-    movement.left = false
-}
-
-function buttonRight()
-{
-    movement.right = true;
-}
-
-function buttonRightEnd()
-{
-    movement.right = false
-}
+    right: false,
+    up: false,
+    keyListener: function (event) {
+        var key_state = (event.type == "keydown") ? true : false;
+        switch (event.keyCode) {
+            case 38:// up key
+                controller.up = key_state;
+                break;
+        }
+    }
+};
 
 var socket = io();
 socket.on('message', function (data) {
@@ -55,16 +27,19 @@ if (!document.URL.endsWith('overview')) {
 
 socket.emit('new player');
 setInterval(function () {
-    socket.emit('movement', movement);
+    socket.emit('movement', controller);
 }, 1000 / 60);
 
-var canvas = document.getElementById('canvas');
-canvas.width = 2048;
-canvas.height = 768;
-var context = canvas.getContext('2d');
-socket.on('state', function (players) {
-    context.clearRect(0, 0, 2048, 768);
-    context.fillStyle = 'green';
+socket.on('state', function (players)
+{
+    context.clearRect(0,0, 2048, 768);
+    context.strokeStyle = "#202830";
+    context.lineWidth = 4;
+    context.beginPath();
+    context.moveTo(0, 384);
+    context.lineTo(2048, 384);
+    context.stroke();
+
     for (var id in players) {
         var player = players[id];
         context.beginPath();
@@ -81,6 +56,8 @@ socket.on('state', function (players) {
         // img.width = 60; img.height = 60;
     }
 });
+window.addEventListener("keydown", controller.keyListener)
+window.addEventListener("keyup", controller.keyListener);
 
 function killAllPlayers() {
     socket.emit('killAll');
