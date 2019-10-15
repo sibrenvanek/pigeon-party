@@ -14,6 +14,8 @@ app.set('port', port);
 
 app.use('/static', express.static(__dirname + '/static'));
 
+app.use('/pictures', express.static(__dirname + '/pictures'))
+
 app.get('/', function (request, response) {
     response.sendFile(path.join(__dirname, 'pages/index.html'));
 });
@@ -54,7 +56,8 @@ io.on('connection', function (socket) {
     });
     socket.on('killAll', function () {
         players = {};
-    })
+        playerQueue = [];
+    });
 });
 
 
@@ -62,10 +65,32 @@ setInterval(function () {
     io.sockets.emit('state', players);
 }, 1000 / 60);
 
-function addPlayer(socket, amountOfPlayers)  {
-    let xPos = 24 + (amountOfPlayers * 80) + 30;
+io.sockets.on('kill', function () {
+    console.log(1)
+    for (const id in players) {
+        const player = players[id];
+        if (player.y == 300) {
+            const xPos = player.x;
+            const yPos = player.y;
+            delete players[socket.id]
+            addPlayerFromQueue(xPos, yPos)
+        }
+    }
+});
+
+function addPlayer(socket, amountOfPlayers) {
+    let xPos = 100 + (amountOfPlayers * 70);
     players[socket.id] = {
         x: xPos,
-        y: 300
+        y: 300,
+        image: Math.round(Math.random() * 30) + '.svg'
     };
+}
+
+function addPlayerFromQueue(xPos, yPos) {
+    players[playerQueue.shift()] = {
+        x: xPos,
+        y: yPos,
+        image: Math.round(Math.random() * 30) + '.svg'
+    }
 }
