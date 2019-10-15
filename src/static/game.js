@@ -58,13 +58,21 @@ socket.on('state', function (players) {
     context.fillStyle = 'green';
     for (var id in players) {
         var player = players[id];
-        var img = document.createElement('img');
+        context.beginPath();
+        context.arc(player.x, player.y, 25, 0, 2 * Math.PI);
+        context.fill();
 
-        img.onload = function () {
-            ctx.drawImage(this, 0, 0);
-        }
+        // var img = document.createElement('img');
 
-        img.src = 'pictures/Bird.svg';
-        img.width = 60; img.height = 60;
+        // img.onload = function () {
+        //     ctx.drawImage(this, 0, 0);
+        // }
+
+        // img.src = 'pictures/Bird.svg';
+        // img.width = 60; img.height = 60;
     }
 });
+
+function killAllPlayers() {
+    socket.emit('killAll');
+}
