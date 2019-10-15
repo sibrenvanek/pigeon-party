@@ -4,38 +4,46 @@ var movement = {
     left: false,
     right: false
 }
-document.addEventListener('keydown', function (event) {
-    switch (event.keyCode) {
-        case 65: // A
-            movement.left = true;
-            break;
-        case 87: // W
-            movement.up = true;
-            break;
-        case 68: // D
-            movement.right = true;
-            break;
-        case 83: // S
-            movement.down = true;
-            break;
-    }
-});
-document.addEventListener('keyup', function (event) {
-    switch (event.keyCode) {
-        case 65: // A
-            movement.left = false;
-            break;
-        case 87: // W
-            movement.up = false;
-            break;
-        case 68: // D
-            movement.right = false;
-            break;
-        case 83: // S
-            movement.down = false;
-            break;
-    }
-});
+
+function buttonUp()
+{
+    movement.up = true;
+}
+
+function buttonUpEnd()
+{
+    movement.up = false;
+}
+
+function buttonDown()
+{
+    movement.down = true;
+}
+
+function buttonDownEnd()
+{
+    movement.down = false
+}
+
+function buttonLeft()
+{
+    movement.left = true;
+}
+
+function buttonLeftEnd()
+{
+    movement.left = false
+}
+
+function buttonRight()
+{
+    movement.right = true;
+}
+
+function buttonRightEnd()
+{
+    movement.right = false
+}
 
 var socket = io();
 socket.on('message', function (data) {
@@ -45,6 +53,7 @@ if (!document.URL.endsWith('overview')) {
     socket.emit('new player');
 }
 
+socket.emit('new player');
 setInterval(function () {
     socket.emit('movement', movement);
 }, 1000 / 60);
