@@ -30,6 +30,11 @@ setInterval(function () {
     socket.emit('movement', controller);
 }, 1000 / 60);
 
+var canvas = document.getElementById('canvas');
+canvas.width = 2048;
+canvas.height = 768;
+var context = canvas.getContext('2d');
+
 socket.on('state', function (players)
 {
     context.clearRect(0,0, 2048, 768);
@@ -42,18 +47,12 @@ socket.on('state', function (players)
 
     for (var id in players) {
         var player = players[id];
-        context.beginPath();
-        context.arc(player.x, player.y, 25, 0, 2 * Math.PI);
-        context.fill();
 
-        // var img = document.createElement('img');
+        var img = document.createElement('img');
+        img.width = 70; img.height = 70;
+        img.src = `pictures/${player.image}`;
 
-        // img.onload = function () {
-        //     ctx.drawImage(this, 0, 0);
-        // }
-
-        // img.src = 'pictures/Bird.svg';
-        // img.width = 60; img.height = 60;
+        context.drawImage(img, player.x, player.y);
     }
 });
 window.addEventListener("keydown", controller.keyListener)
