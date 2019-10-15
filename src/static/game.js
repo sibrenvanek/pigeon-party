@@ -36,11 +36,12 @@ document.addEventListener('keyup', function (event) {
             break;
     }
 });
+
 var socket = io();
 socket.on('message', function (data) {
     console.log(data);
 });
-if(!document.URL.endsWith('overview')){
+if (!document.URL.endsWith('overview')) {
     socket.emit('new player');
 }
 
@@ -58,7 +59,20 @@ socket.on('state', function (players) {
     for (var id in players) {
         var player = players[id];
         context.beginPath();
-        context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
+        context.arc(player.x, player.y, 25, 0, 2 * Math.PI);
         context.fill();
+
+        // var img = document.createElement('img');
+
+        // img.onload = function () {
+        //     ctx.drawImage(this, 0, 0);
+        // }
+
+        // img.src = 'pictures/Bird.svg';
+        // img.width = 60; img.height = 60;
     }
 });
+
+function killAllPlayers() {
+    socket.emit('killAll');
+}
