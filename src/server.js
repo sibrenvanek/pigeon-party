@@ -15,6 +15,10 @@ app.get('/', function (request, response) {
     response.sendFile(path.join(__dirname, 'pages/index.html'));
 });
 
+app.get('/knoppen', function (request, response) {
+    response.sendFile(path.join(__dirname, 'pages/knoppen.html'));
+});
+
 server.listen(port, function () {
     console.log(`🚀  Starting server on port ${port}`);
 });
