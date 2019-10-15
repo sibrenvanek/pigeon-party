@@ -6,7 +6,10 @@ var socketIO = require('socket.io');
 var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
-const port = 5000
+
+const port = 5000;
+const maxAmountOfPlayers = 25;
+
 app.set('port', port);
 
 app.use('/static', express.static(__dirname + '/static'));
@@ -27,12 +30,16 @@ server.listen(port, function () {
 });
 
 var players = {};
+var playerQueue = [];
 io.on('connection', function (socket) {
     socket.on('new player', function () {
-        players[socket.id] = {
-            x: 300,
-            y: 300
-        };
+        const amountOfPlayers = Object.keys(players).length;
+        if (amountOfPlayers < maxAmountOfPlayers) {
+            addPlayer(socket, amountOfPlayers)
+        }
+        else {
+            playerQueue.push(socket.id);
+        }
     });
     socket.on('movement', function (data) {
         var player = players[socket.id] || {};
@@ -49,6 +56,20 @@ io.on('connection', function (socket) {
             player.y += 5;
         }
     });
-}); setInterval(function () {
+    socket.on('killAll', function () {
+        players = {};
+    })
+});
+
+
+setInterval(function () {
     io.sockets.emit('state', players);
 }, 1000 / 60);
+
+function addPlayer(socket, amountOfPlayers)  {
+    let xPos = 24 + (amountOfPlayers * 80) + 30;
+    players[socket.id] = {
+        x: xPos,
+        y: 300
+    };
+}
