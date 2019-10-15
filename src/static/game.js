@@ -83,6 +83,9 @@ var socket = io();
 socket.on('message', function (data) {
     console.log(data);
 });
+if(!document.URL.endsWith('overview')){
+    socket.emit('new player');
+}
 
 socket.emit('')
 
