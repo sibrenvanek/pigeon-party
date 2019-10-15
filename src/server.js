@@ -62,7 +62,6 @@ io.on('connection', function (socket) {
             player.y = 400 - 16 - 32;
             player.y_velocity = 0;
         }
-    
     });
     socket.on('killAll', function () {
         players = {};
