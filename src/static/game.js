@@ -14,7 +14,6 @@ controller = {
                 controller.up = key_state;
                 break;
         }
-
     }
 };
 
