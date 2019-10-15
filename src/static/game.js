@@ -53,9 +53,79 @@ var canvas = document.getElementById('canvas');
 canvas.width = 2048;
 canvas.height = 768;
 var context = canvas.getContext('2d');
-socket.on('state', function (players) {
-    context.clearRect(0, 0, 2048, 768);
-    context.fillStyle = 'green';
+
+rectangle = {
+
+    height: 32,
+    jumping: true,
+    width: 32,
+    x: 1024, // center of the canvas
+    x_velocity: 0,
+    y: 0,
+    y_velocity: 0
+
+};
+
+
+controller = {
+    left: false,
+    right: false,
+    up: false,
+    keyListener: function (event) {
+        var key_state = (event.type == "keydown") ? true : false;
+        switch (event.keyCode) {
+            case 38:// up key
+                controller.up = key_state;
+                break;
+        }
+
+    }
+
+};
+
+
+
+socket.on('state', function (players)
+{
+    context.fillStyle = "#000000";
+    context.fillRect(0, 0, 2048, 768);
+    context.fillStyle = 'blue';
+
+    if (controller.up && rectangle.jumping == false) 
+    {
+        rectangle.y_velocity -= 20;
+        rectangle.jumping = true;
+    }
+    rectangle.y_velocity += 1.5;// gravity
+    rectangle.x += rectangle.x_velocity;
+    rectangle.y += rectangle.y_velocity;
+    rectangle.x_velocity *= 0.9;// friction
+    rectangle.y_velocity *= 0.9;// friction
+
+    // Rechthoek op lijn laten staan
+    if (rectangle.y > 400 - 16 - 32) 
+    {
+
+        rectangle.jumping = false;
+        rectangle.y = 400 - 16 - 32;
+        rectangle.y_velocity = 0;
+
+    }
+
+    context.fillStyle = "#000000";
+    context.fillRect(0, 0, 2048, 768);
+    context.fillStyle = "#ff0000";// hex for red
+    context.beginPath();
+    context.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+    context.fill();
+    context.strokeStyle = "#202830";
+    context.lineWidth = 4;
+    context.beginPath();
+    context.moveTo(0, 384);
+    context.lineTo(2048, 384);
+    context.stroke();
+
+    
     for (var id in players) {
         var player = players[id];
         context.beginPath();
