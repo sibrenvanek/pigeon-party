@@ -1,71 +1,7 @@
-var movement = {
-    up: false,
-    down: false,
-    left: false,
-    right: false
-}
-document.addEventListener('keydown', function (event) {
-    switch (event.keyCode) {
-        case 65: // A
-            movement.left = true;
-            break;
-        case 87: // W
-            movement.up = true;
-            break;
-        case 68: // D
-            movement.right = true;
-            break;
-        case 83: // S
-            movement.down = true;
-            break;
-    }
-});
-document.addEventListener('keyup', function (event) {
-    switch (event.keyCode) {
-        case 65: // A
-            movement.left = false;
-            break;
-        case 87: // W
-            movement.up = false;
-            break;
-        case 68: // D
-            movement.right = false;
-            break;
-        case 83: // S
-            movement.down = false;
-            break;
-    }
-});
-
-var socket = io();
-socket.on('message', function (data) {
-    console.log(data);
-});
-if (!document.URL.endsWith('overview')) {
-    socket.emit('new player');
-}
-
-setInterval(function () {
-    socket.emit('movement', movement);
-}, 1000 / 60);
-
-var canvas = document.getElementById('canvas');
-canvas.width = 2048;
-canvas.height = 768;
-var context = canvas.getContext('2d');
-
-rectangle = {
-
-    height: 32,
-    jumping: true,
-    width: 32,
-    x: 1024, // center of the canvas
-    x_velocity: 0,
-    y: 0,
-    y_velocity: 0
-
-};
-
+var rectangle, controller, context, loop;
+context = document.querySelector("canvas").getContext("2d");
+context.canvas.height = 768;
+context.canvas.width = 2048;
 
 controller = {
     left: false,
@@ -80,44 +16,28 @@ controller = {
         }
 
     }
-
 };
+
+var socket = io();
+socket.on('message', function (data) {
+    console.log(data);
+});
+if (!document.URL.endsWith('overview')) {
+    socket.emit('new player');
+}
+
+setInterval(function () {
+    socket.emit('movement', controller);
+}, 1000 / 60);
+
+
 
 
 
 socket.on('state', function (players)
 {
-    context.fillStyle = "#000000";
-    context.fillRect(0, 0, 2048, 768);
-    context.fillStyle = 'blue';
+    context.clearRect(0,0, 2048, 768);
 
-    if (controller.up && rectangle.jumping == false) 
-    {
-        rectangle.y_velocity -= 20;
-        rectangle.jumping = true;
-    }
-    rectangle.y_velocity += 1.5;// gravity
-    rectangle.x += rectangle.x_velocity;
-    rectangle.y += rectangle.y_velocity;
-    rectangle.x_velocity *= 0.9;// friction
-    rectangle.y_velocity *= 0.9;// friction
-
-    // Rechthoek op lijn laten staan
-    if (rectangle.y > 400 - 16 - 32) 
-    {
-
-        rectangle.jumping = false;
-        rectangle.y = 400 - 16 - 32;
-        rectangle.y_velocity = 0;
-
-    }
-
-    context.fillStyle = "#000000";
-    context.fillRect(0, 0, 2048, 768);
-    context.fillStyle = "#ff0000";// hex for red
-    context.beginPath();
-    context.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
-    context.fill();
     context.strokeStyle = "#202830";
     context.lineWidth = 4;
     context.beginPath();
@@ -125,7 +45,6 @@ socket.on('state', function (players)
     context.lineTo(2048, 384);
     context.stroke();
 
-    
     for (var id in players) {
         var player = players[id];
         context.beginPath();
@@ -142,6 +61,8 @@ socket.on('state', function (players)
         // img.width = 60; img.height = 60;
     }
 });
+window.addEventListener("keydown", controller.keyListener)
+window.addEventListener("keyup", controller.keyListener);
 
 function killAllPlayers() {
     socket.emit('killAll');
