@@ -8,7 +8,6 @@ var server = http.Server(app);
 var io = socketIO(server);
 
 const port = 5000;
-const maxAmountOfPlayers = 25;
 
 app.set('port', port);
 
@@ -33,11 +32,12 @@ server.listen(port, function () {
 
 var players = {};
 var playerQueue = [];
+var freeSpaces = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+
 io.on('connection', function (socket) {
     socket.on('new player', function () {
-        const amountOfPlayers = Object.keys(players).length;
-        if (amountOfPlayers < maxAmountOfPlayers) {
-            addPlayer(socket, amountOfPlayers)
+        if (freeSpaces.length > 0) {
+            addPlayer(socket, freeSpaces.shift())
         }
         else {
             playerQueue.push(socket.id);
@@ -45,9 +45,8 @@ io.on('connection', function (socket) {
     });
     socket.on('movement', function (controller) {
         var player = players[socket.id] || {};
-        
-        if (controller.up && player.jumping == false) 
-        {
+
+        if (controller.up && player.jumping == false) {
             player.y_velocity -= 20;
             player.jumping = true;
         }
@@ -57,51 +56,61 @@ io.on('connection', function (socket) {
         player.x_velocity *= 0.9;// friction
         player.y_velocity *= 0.9;// friction
         // Rechthoek op lijn laten staan
-        if (player.y > 400 - 16 - 32) 
-        {
+        if (player.y > 400 - 16 - 32) {
             player.jumping = false;
             player.y = 400 - 16 - 32;
             player.y_velocity = 0;
         }
     });
+
+    socket.on('kill', function () {
+        const player = players[socket.id];
+        const xPos = player.x;
+        const yPos = player.y;
+        delete players[socket.id];
+        if (playerQueue.length > 0) {
+            addPlayerFromQueue(xPos, yPos, player.spaceId);
+        }
+        else {
+            freeSpaces.push(player.spaceId);
+        }
+    })
+
     socket.on('killAll', function () {
         players = {};
         playerQueue = [];
     });
+
+    socket.on('startLightning', () => {
+        setTimeout(startLightning, 3000);
+    });
 });
+
 setInterval(function () {
     io.sockets.emit('state', players);
 }, 1000 / 60);
 
-io.sockets.on('kill', function () {
-    console.log(1)
-    for (const id in players) {
-        const player = players[id];
-        if (player.y == 300) {
-            const xPos = player.x;
-            const yPos = player.y;
-            delete players[socket.id]
-            addPlayerFromQueue(xPos, yPos)
-        }
-    }
-});
-
-function addPlayer(socket, amountOfPlayers) {
-    let xPos = 100 + (amountOfPlayers * 70);
-    players[socket.id] = {
-        x: xPos,
-        y: 300,
-        image: Math.round(Math.random() * 30) + '.svg',
-        jumping: false,
-        y_velocity: 0,
-        x_velocity: 0
-    };
+function startLightning() {
+    io.sockets.emit('lightning');
 }
 
-function addPlayerFromQueue(xPos, yPos) {
-    players[playerQueue.shift()] = {
-        x: xPos,
-        y: yPos,
-        image: Math.round(Math.random() * 30) + '.svg'
+function addPlayer(socket, spaceId) {
+    let xPos = 100 + (spaceId * 70);
+    players[socket.id] = createPlayer(xPos, 300, Math.round(Math.random() * 30) + '.svg', false, 0, 0, spaceId);
+}
+
+function addPlayerFromQueue(xPos, yPos, spaceId) {
+    players[playerQueue.shift()] = createPlayer(xPos, yPos, Math.round(Math.random() * 30) + '.svg', false, 0, 0, spaceId);
+}
+
+function createPlayer(x, y, image, jumping, y_velocity, x_velocity, spaceId) {
+    return {
+        x,
+        y,
+        image,
+        jumping,
+        y_velocity,
+        x_velocity,
+        spaceId
     }
 }

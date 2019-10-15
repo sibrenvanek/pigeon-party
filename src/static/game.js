@@ -32,9 +32,8 @@ canvas.width = 2048;
 canvas.height = 768;
 var context = canvas.getContext('2d');
 
-socket.on('state', function (players)
-{
-    context.clearRect(0,0, 2048, 768);
+socket.on('state', function (players) {
+    context.clearRect(0, 0, 2048, 768);
     context.strokeStyle = "#202830";
     context.lineWidth = 4;
     context.beginPath();
@@ -58,3 +57,13 @@ window.addEventListener("keyup", controller.keyListener);
 function killAllPlayers() {
     socket.emit('killAll');
 }
+
+function startLightning() {
+    socket.emit('startLightning');
+}
+
+socket.on('lightning', (players) => {
+    if (players[socket.id].jumping == false) {
+        socket.emit('kill');
+    }
+});
