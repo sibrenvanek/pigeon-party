@@ -1,7 +1,4 @@
-var rectangle, controller, context, loop;
-context = document.querySelector("canvas").getContext("2d");
-context.canvas.height = 768;
-context.canvas.width = 2048;
+var controller, context, loop;
 
 controller = {
     left: false,
@@ -21,11 +18,11 @@ var socket = io();
 socket.on('message', function (data) {
     console.log(data);
 });
+
 if (!document.URL.endsWith('overview')) {
     socket.emit('new player');
 }
 
-socket.emit('new player');
 setInterval(function () {
     socket.emit('movement', controller);
 }, 1000 / 60);
@@ -41,8 +38,8 @@ socket.on('state', function (players)
     context.strokeStyle = "#202830";
     context.lineWidth = 4;
     context.beginPath();
-    context.moveTo(0, 384);
-    context.lineTo(2048, 384);
+    context.moveTo(0, 424);
+    context.lineTo(2048, 424);
     context.stroke();
 
     for (var id in players) {
