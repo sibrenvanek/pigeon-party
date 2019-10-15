@@ -23,6 +23,10 @@ app.get('/overview', function (request, response) {
     response.sendFile(path.join(__dirname, 'pages/overview.html'));
 });
 
+app.get('/knoppen', function (request, response) {
+    response.sendFile(path.join(__dirname, 'pages/knoppen.html'));
+});
+
 server.listen(port, function () {
     console.log(`🚀  Starting server on port ${port}`);
 });
@@ -39,19 +43,25 @@ io.on('connection', function (socket) {
             playerQueue.push(socket.id);
         }
     });
-    socket.on('movement', function (data) {
+    socket.on('movement', function (controller) {
         var player = players[socket.id] || {};
-        if (data.left) {
-            player.x -= 5;
+        
+        if (controller.up && player.jumping == false) 
+        {
+            player.y_velocity -= 20;
+            player.jumping = true;
         }
-        if (data.up) {
-            player.y -= 5;
-        }
-        if (data.right) {
-            player.x += 5;
-        }
-        if (data.down) {
-            player.y += 5;
+        player.y_velocity += 1.5;// gravity
+        player.x += player.x_velocity;
+        player.y += player.y_velocity;
+        player.x_velocity *= 0.9;// friction
+        player.y_velocity *= 0.9;// friction
+        // Rechthoek op lijn laten staan
+        if (player.y > 400 - 16 - 32) 
+        {
+            player.jumping = false;
+            player.y = 400 - 16 - 32;
+            player.y_velocity = 0;
         }
     });
     socket.on('killAll', function () {
@@ -59,8 +69,6 @@ io.on('connection', function (socket) {
         playerQueue = [];
     });
 });
-
-
 setInterval(function () {
     io.sockets.emit('state', players);
 }, 1000 / 60);
@@ -83,7 +91,10 @@ function addPlayer(socket, amountOfPlayers) {
     players[socket.id] = {
         x: xPos,
         y: 300,
-        image: Math.round(Math.random() * 30) + '.svg'
+        image: Math.round(Math.random() * 30) + '.svg',
+        jumping: false,
+        y_velocity: 0,
+        x_velocity: 0
     };
 }
 
