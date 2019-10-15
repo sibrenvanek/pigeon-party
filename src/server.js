@@ -29,10 +29,6 @@ server.listen(port, function () {
     console.log(`🚀  Starting server on port ${port}`);
 });
 
-
-
-
-
 var players = {};
 var playerQueue = [];
 io.on('connection', function (socket) {
@@ -46,6 +42,7 @@ io.on('connection', function (socket) {
         }
     });
     socket.on('movement', function (controller) {
+
         var player = players[socket.id] || {};
 
         if (controller.up && player.jumping == false) 
@@ -58,15 +55,12 @@ io.on('connection', function (socket) {
         player.y += player.y_velocity;
         player.x_velocity *= 0.9;// friction
         player.y_velocity *= 0.9;// friction
-    
         // Rechthoek op lijn laten staan
         if (player.y > 400 - 16 - 32) 
         {
-    
             player.jumping = false;
             player.y = 400 - 16 - 32;
             player.y_velocity = 0;
-    
         }
     
     });
@@ -74,7 +68,6 @@ io.on('connection', function (socket) {
         players = {};
     })
 });
-
 
 setInterval(function () {
     io.sockets.emit('state', players);
