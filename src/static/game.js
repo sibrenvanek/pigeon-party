@@ -87,8 +87,6 @@ if (!document.URL.endsWith('overview')) {
     socket.emit('new player');
 }
 
-socket.emit('')
-
 socket.emit('new player');
 setInterval(function () {
     socket.emit('movement', movement);
