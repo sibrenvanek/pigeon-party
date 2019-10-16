@@ -1,4 +1,11 @@
-var controller, context, loop;
+var controller, context, loop, warningImg = '0';
+var imgWarning = document.createElement("img");
+var imgWarning2 = document.createElement("img");
+imgWarning.src = "pictures/Warningsign.svg";
+imgWarning2.src = "pictures/Warningsign2.svg";
+
+
+
 
 controller = {
     left: false,
@@ -59,6 +66,33 @@ if (canvas) {
     context = canvas.getContext('2d');
 }
 
+function warning()
+{
+    warningImg = '1'
+    warningTimer1 = setInterval(function(){
+        if (warningImg === '1')
+        {
+            warningImg = '2' 
+        }
+        else if(warningImg === '2')
+        {
+            warningImg = '1'
+        }
+        
+    }, 1000);
+   setTimeout(function(){
+       clearInterval(warningTimer1);
+       warningImg = '0'
+   }, 3000)
+}
+
+function emitWarning()
+{
+    socket.emit("emitWarning");
+}
+
+socket.on('warning', warning);
+
 socket.on('state', function (players) {
     if (context) {
         context.clearRect(0, 0, 2048, 768);
@@ -69,6 +103,14 @@ socket.on('state', function (players) {
         context.lineTo(2048, 424);
         context.stroke();
 
+        if (warningImg === '1')
+        {
+            context.drawImage(imgWarning, 874, 185);
+        }
+        else if (warningImg === '2')
+        {
+            context.drawImage(imgWarning2, 874, 185);
+        }
         for (var id in players) {
             var player = players[id];
 

@@ -82,6 +82,10 @@ io.on('connection', function (socket) {
         setTimeout(startLightning, 3000);
     });
 
+    socket.on('emitWarning', function () {
+        socket.emit('warning');
+    });
+
     socket.on('disconnect', function () {
         killPlayer(socket);
         sockets = sockets.filter(socket2 => socket.id !== socket2.id);
