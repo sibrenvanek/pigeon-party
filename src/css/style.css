@@ -2,6 +2,7 @@ html, body
 {
     margin: 0;
     padding: 0;
+    background-color: #4B5ACD;
 }
 
 .startscreen-logo
@@ -10,11 +11,6 @@ html, body
     width: 80%;
     margin: 0 auto;
     margin-top: 40%;
-}
-
-.background
-{
-    background-image: url('../pictures/Beginscherm\ Achtergrond2.png');
 }
 
 h1
