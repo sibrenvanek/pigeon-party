@@ -20,16 +20,21 @@ app.use('/css', express.static(__dirname + '/css'));
 app.get('/', function (request, response) {
     response.sendFile(path.join(__dirname, 'pages/startscherm.html'));
 });
+
+app.get('/customization', function(request, response) {
+    response.sendFile(path.join(__dirname, 'pages/customization.html'));
+});
+
+app.get('/gameover', function (request, response) {
+    response.sendFile(path.join(__dirname, 'pages/gameover.html'))
+});
+
 app.get('/overview', function (request, response) {
     response.sendFile(path.join(__dirname, 'pages/overview.html'));
 });
 
 app.get('/knoppen', function (request, response) {
     response.sendFile(path.join(__dirname, 'pages/knoppen.html'));
-});
-
-app.get('/gameover', function (request, response) {
-    response.sendFile(path.join(__dirname, 'pages/gameover.html'))
 });
 
 server.listen(port, function () {

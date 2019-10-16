@@ -140,7 +140,7 @@ socket.on('gameover', function(player) {
     window.localStorage.setItem("playerImage",player.image);
     window.localStorage.setItem("playerName", player.name);
     window.localStorage.setItem("playerScore",player.score);
-    window.location.href = "/";
+    window.location.href = "/gameover";
 })
 
 window.addEventListener("keydown", controller.keyListener)
