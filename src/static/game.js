@@ -141,7 +141,8 @@ socket.on('state', function (players, leaderboard) {
             context.drawImage(bigLightning, 34, 325)
         }
         if (drawSmallLightning) {
-          
+            context.drawImage(smallLightning, -50, 325)
+            context.drawImage(smallLightning, 1924, 325)
         }
         context.drawImage(plane1Img, 710, 20)
         context.drawImage(plane2Img, 15, 40)
