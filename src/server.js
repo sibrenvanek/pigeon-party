@@ -85,6 +85,26 @@ io.on('connection', function (socket) {
         setTimeout(startLightning, 3000);
     });
 
+
+
+    socket.on('emitWind', function () {
+        socket.emit('wind');
+
+        setInterval(function () 
+        {
+            players.forEach(player => {
+                if (windLeft)
+                {
+                    player.angle -= 30;
+                }
+                else if (windRight)
+                {
+                    player.angle += 30;
+                }
+            })
+        },1000)
+    });
+
     socket.on('emitWarning', function () {
         socket.emit('warning');
     });
