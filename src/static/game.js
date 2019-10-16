@@ -1,4 +1,4 @@
-var controller, context, loop;
+var controller, context, loop, name = 'test', sprite = '0.svg';
 
 controller = {
     left: false,
@@ -44,7 +44,7 @@ socket.on('message', function (data) {
 });
 
 if (!document.URL.endsWith('overview')) {
-    socket.emit('new player');
+    socket.emit('new player', name);
 }
 
 setInterval(function () {
@@ -59,25 +59,42 @@ if (canvas) {
     context = canvas.getContext('2d');
 }
 
-socket.on('state', function (players) {
+const plane1Img = document.createElement('img');
+plane1Img.src = 'pictures/Plane 1.svg';
+const plane2Img = document.createElement('img');
+plane2Img.src = 'pictures/Plane 2.svg';
+const plane3Img = document.createElement('img');
+plane3Img.src = 'pictures/Plane 3.svg';
+const background = document.createElement('img');
+background.src = 'pictures/Background_V2.svg';
+const qrcode = document.createElement('img');
+qrcode.src = 'pictures/QR code.svg';
+
+socket.on('state', function (players, leaderboard) {
     if (context) {
         context.clearRect(0, 0, 2048, 768);
-        context.strokeStyle = "#202830";
-        context.lineWidth = 4;
-        context.beginPath();
-        context.moveTo(0, 424);
-        context.lineTo(2048, 424);
-        context.stroke();
+        context.drawImage(background, 0, 0)
+        context.drawImage(qrcode, 945, 538)
 
         for (var id in players) {
             var player = players[id];
 
             var img = document.createElement('img');
-            img.width = 70; img.height = 70;
             img.src = `pictures/${player.image}`;
 
             context.drawImage(img, player.x, player.y);
         }
+        context.drawImage(plane1Img, 710, 20)
+        context.drawImage(plane2Img, 15, 40)
+        context.drawImage(plane3Img, 1405, 60)
+        context.fillStyle = 'black';
+        context.font = '40px heavy_dock11'
+        context.fillText(`${leaderboard[0].name}`, 750, 55, 200);
+        context.fillText(`${leaderboard[1].name}`, 55, 75, 200);
+        context.fillText(`${leaderboard[2].name}`, 1445, 95, 200);
+        context.fillText(`${leaderboard[0].score}`, 750, 105, 200);
+        context.fillText(`${leaderboard[1].score}`, 55, 125, 200);
+        context.fillText(`${leaderboard[2].score}`, 1445, 145, 200);
     }
 });
 window.addEventListener("keydown", controller.keyListener)

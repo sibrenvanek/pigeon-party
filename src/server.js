@@ -37,14 +37,16 @@ let playerQueue = [];
 let freeSpaces = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
 let sockets = [];
 
+let leaderboard = [{ name: 'no player yet', score: 0 }, { name: 'no player yet', score: 0 }, { name: 'no player yet', score: 0 }];
+
 io.on('connection', function (socket) {
-    socket.on('new player', function () {
+    socket.on('new player', function (name, sprite = '0.svg') {
         sockets.push(socket);
         if (freeSpaces.length > 0) {
-            addPlayer(socket, freeSpaces.shift())
+            addPlayer(socket, freeSpaces.shift(), name, sprite);
         }
         else {
-            playerQueue.push(socket.id);
+            playerQueue.push({ socket, name, sprite });
         }
     });
 
@@ -61,9 +63,9 @@ io.on('connection', function (socket) {
         player.x_velocity *= 0.9;// friction
         player.y_velocity *= 0.9;// friction
         // Rechthoek op lijn laten staan
-        if (player.y > 400 - 16 - 32) {
+        if (player.y > 340 - 16 - 32) {
             player.jumping = false;
-            player.y = 400 - 16 - 32;
+            player.y = 340 - 16 - 32;
             player.y_velocity = 0;
         }
     });
@@ -76,6 +78,7 @@ io.on('connection', function (socket) {
         players = {};
         playerQueue = [];
         freeSpaces = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+        sockets = [];
     });
 
     socket.on('startLightning', function () {
@@ -91,6 +94,8 @@ io.on('connection', function (socket) {
 function killPlayer(socket) {
     const player = players[socket.id];
     if (player) {
+        player.score = Date.now() - player.startTime;
+        addPlayerToLeaderboard(player);
         const xPos = player.x;
         const yPos = player.y;
         delete players[socket.id];
@@ -103,22 +108,44 @@ function killPlayer(socket) {
     }
 }
 
+function addPlayerToLeaderboard(player) {
+    if (leaderboard[0].score < player.score) {
+        leaderboard[2].score = leaderboard[1].score;
+        leaderboard[2].name = leaderboard[1].name;
+        leaderboard[1].score = leaderboard[0].score;
+        leaderboard[1].name = leaderboard[0].name;
+        leaderboard[0].score = player.score;
+        leaderboard[0].name = player.name;
+    }
+    else if (leaderboard[1].score < player.score) {
+        leaderboard[2].score = leaderboard[1].score;
+        leaderboard[2].name = leaderboard[1].name;
+        leaderboard[1].score = player.score;
+        leaderboard[1].name = player.name;
+    }
+    else if (leaderboard[2].score < player.score) {
+        leaderboard[2].score = player.score;
+        leaderboard[2].name = player.name;
+    }
+}
+
 function startLightning() {
     sockets.forEach(socket => {
         socket.emit('lightning', players);
     });
 }
 
-function addPlayer(socket, spaceId) {
+function addPlayer(socket, spaceId, name, sprite) {
     let xPos = 100 + (spaceId * 70);
-    players[socket.id] = createPlayer(xPos, 300, Math.round(Math.random() * 30) + '.svg', false, 0, 0, spaceId);
+    players[socket.id] = createPlayer(xPos, 300, sprite, false, 0, 0, spaceId, name);
 }
 
 function addPlayerFromQueue(xPos, yPos, spaceId) {
-    players[playerQueue.shift()] = createPlayer(xPos, yPos, Math.round(Math.random() * 30) + '.svg', false, 0, 0, spaceId);
+    const newPlayer = playerQueue.shift();
+    players[newPlayer.socket.id] = createPlayer(xPos, yPos, newPlayer.sprite, false, 0, 0, spaceId, newPlayer.name);
 }
 
-function createPlayer(x, y, image, jumping, y_velocity, x_velocity, spaceId) {
+function createPlayer(x, y, image, jumping, y_velocity, x_velocity, spaceId, name) {
     return {
         x,
         y,
@@ -126,7 +153,9 @@ function createPlayer(x, y, image, jumping, y_velocity, x_velocity, spaceId) {
         jumping,
         y_velocity,
         x_velocity,
-        spaceId
+        spaceId,
+        name,
+        startTime: Date.now()
     }
 }
 
@@ -134,7 +163,7 @@ startGameLoop();
 
 function startGameLoop() {
     setInterval(function () {
-        io.sockets.emit('state', players);
+        io.sockets.emit('state', players, leaderboard);
     }, 1000 / 60);
 
     setInterval(function () {
