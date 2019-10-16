@@ -1,8 +1,6 @@
 var controller, context, loop, warningImg = '0';
 var imgWarning = document.createElement("img");
 imgWarning.src = "pictures/Warningsign.png";
-
-
 var imgWarning2 = document.createElement("img");
 imgWarning2.src = "pictures/Warningsign2.png";
 
@@ -68,20 +66,15 @@ if (canvas) {
 
 function warning()
 {
-    console.log('warninginginging');
     warningImg = '1'
     warningTimer1 = setInterval(function(){
         if (warningImg === '1')
         {
-          warningImg = '2'
-            
-            console.log('draw sign: 1');
-          
+            warningImg = '2' 
         }
         else if(warningImg === '2')
         {
             warningImg = '1'
-            console.log('draw sign: 2');
         }
         
     }, 1000);
