@@ -103,21 +103,24 @@ bigLightning.src = 'pictures/Lange Bliksem.svg';
 const smallLightning = document.createElement('img');
 smallLightning.src = 'pictures/Bliksem verticaal.svg';
 
-const cloudRight = document.createElement('img');
-cloudRight.src = 'pictures/cloudLeft.svg';
 const cloudLeft = document.createElement('img');
-cloudLeft.src = 'pictures/cloudRight.svg';
+cloudLeft.src = 'pictures/cloudLeft.svg';
+const cloudRight = document.createElement('img');
+cloudRight.src = 'pictures/cloudRight.svg';
 
 socket.on('state', function (players, leaderboard) {
     if (context) {
         context.clearRect(0, 0, 2048, 768);
         context.drawImage(background, 0, 0)
         context.drawImage(qrcode, 945, 538)
-       // context.drawImage(cloudRight, 0, 200)
+            
         context.drawImage(cloudLeft, 1800, 180)
         context.drawImage(cloudLeft, 1200, 180)
         context.drawImage(cloudLeft, 600, 180)
- 
+    
+        context.drawImage(cloudRight, 68, 180)
+        context.drawImage(cloudRight, 668, 180)
+        context.drawImage(cloudRight, 1268, 180)
 
 
         if (warningImg === '1') {
