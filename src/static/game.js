@@ -4,8 +4,7 @@ var imgWarning2 = document.createElement("img");
 imgWarning.src = "pictures/Warningsign.svg";
 imgWarning2.src = "pictures/Warningsign2.svg";
 
-
-
+let drawSmallLightning = false, drawBigLightning = false;
 
 controller = {
     left: false,
@@ -99,6 +98,10 @@ const background = document.createElement('img');
 background.src = 'pictures/Background_V2.svg';
 const qrcode = document.createElement('img');
 qrcode.src = 'pictures/QR code.svg';
+const bigLightning = document.createElement('img');
+bigLightning.src = 'pictures/Lange Bliksem.svg';
+const smallLightning = document.createElement('img');
+smallLightning.src = 'pictures/Bliksem verticaal.svg';
 
 socket.on('state', function (players, leaderboard) {
     if (context) {
@@ -119,6 +122,13 @@ socket.on('state', function (players, leaderboard) {
             img.src = `pictures/${player.image}`;
 
             context.drawImage(img, player.x, player.y);
+        }
+        if (drawBigLightning) {
+            context.drawImage(bigLightning, 34, 325)
+        }
+        if (drawSmallLightning) {
+            context.drawImage(smallLightning, -50, 325)
+            context.drawImage(smallLightning, 1924, 325)
         }
         context.drawImage(plane1Img, 710, 20)
         context.drawImage(plane2Img, 15, 40)
@@ -145,8 +155,18 @@ function startLightning() {
 }
 
 socket.on('lightning', (players) => {
-    player = players[socket.id];
-    if (player && player.jumping == false) {
-        socket.emit('kill');
-    }
+    drawSmallLightning = true;
+    setTimeout(function () {
+        drawSmallLightning = false;
+        drawBigLightning = true;
+        if (players) {
+            player = players[socket.id];
+            if (player && player.jumping == false) {
+                socket.emit('kill');
+            }
+        }
+        setTimeout(function () {
+            drawBigLightning = false;
+        }, 200);
+    }, 2000);
 });

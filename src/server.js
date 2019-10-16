@@ -98,7 +98,7 @@ io.on('connection', function (socket) {
 function killPlayer(socket) {
     const player = players[socket.id];
     if (player) {
-        player.score = Date.now() - player.startTime;
+        player.score = Math.round((Date.now() - player.startTime) / 100);
         addPlayerToLeaderboard(player);
         const xPos = player.x;
         const yPos = player.y;
