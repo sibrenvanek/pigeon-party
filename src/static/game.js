@@ -134,14 +134,14 @@ socket.on('state', function (players, leaderboard) {
                 else if (player.angle === -30) {
                     context.translate(player.x, player.y);
                     context.rotate(player.angle * 0.0174532925);
-                    context.drawImage(img, 0, 40);
+                    context.drawImage(img, -110, 40);
                     context.rotate(-player.angle * 0.0174532925);
                     context.translate(-player.x, -player.y);
                 }
                 else if (player.angle === -60) {
                     context.translate(player.x, player.y);
                     context.rotate(player.angle * 0.0174532925);
-                    context.drawImage(img, -50, 50);
+                    context.drawImage(img, -145, 0);
                     context.rotate(-player.angle * 0.0174532925);
                     context.translate(-player.x, -player.y);
                 }
@@ -151,14 +151,14 @@ socket.on('state', function (players, leaderboard) {
                 else if (player.angle === 30) {
                     context.translate(player.x, player.y);
                     context.rotate(player.angle * 0.0174532925);
-                    context.drawImage(img, 0, 40);
+                    context.drawImage(img, 25, 55);
                     context.rotate(-player.angle * 0.0174532925);
                     context.translate(-player.x, -player.y);
                 }
                 else if (player.angle === 60) {
                     context.translate(player.x, player.y);
                     context.rotate(player.angle * 0.0174532925);
-                    context.drawImage(img, -50, 50);
+                    context.drawImage(img, 80, 5);
                     context.rotate(-player.angle * 0.0174532925);
                     context.translate(-player.x, -player.y);
                 }
