@@ -14,6 +14,8 @@ app.set('port', port);
 
 app.use('/static', express.static(__dirname + '/static'));
 
+app.use('/pictures', express.static(__dirname + '/pictures'))
+
 app.get('/', function (request, response) {
     response.sendFile(path.join(__dirname, 'pages/index.html'));
 });
@@ -41,35 +43,65 @@ io.on('connection', function (socket) {
             playerQueue.push(socket.id);
         }
     });
-    socket.on('movement', function (data) {
+    socket.on('movement', function (controller) {
         var player = players[socket.id] || {};
-        if (data.left) {
-            player.x -= 5;
+        
+        if (controller.up && player.jumping == false) 
+        {
+            player.y_velocity -= 20;
+            player.jumping = true;
         }
-        if (data.up) {
-            player.y -= 5;
-        }
-        if (data.right) {
-            player.x += 5;
-        }
-        if (data.down) {
-            player.y += 5;
+        player.y_velocity += 1.5;// gravity
+        player.x += player.x_velocity;
+        player.y += player.y_velocity;
+        player.x_velocity *= 0.9;// friction
+        player.y_velocity *= 0.9;// friction
+        // Rechthoek op lijn laten staan
+        if (player.y > 400 - 16 - 32) 
+        {
+            player.jumping = false;
+            player.y = 400 - 16 - 32;
+            player.y_velocity = 0;
         }
     });
     socket.on('killAll', function () {
         players = {};
-    })
+        playerQueue = [];
+    });
 });
-
-
 setInterval(function () {
     io.sockets.emit('state', players);
 }, 1000 / 60);
 
-function addPlayer(socket, amountOfPlayers)  {
-    let xPos = 24 + (amountOfPlayers * 80) + 30;
+io.sockets.on('kill', function () {
+    console.log(1)
+    for (const id in players) {
+        const player = players[id];
+        if (player.y == 300) {
+            const xPos = player.x;
+            const yPos = player.y;
+            delete players[socket.id]
+            addPlayerFromQueue(xPos, yPos)
+        }
+    }
+});
+
+function addPlayer(socket, amountOfPlayers) {
+    let xPos = 100 + (amountOfPlayers * 70);
     players[socket.id] = {
         x: xPos,
-        y: 300
+        y: 300,
+        image: Math.round(Math.random() * 30) + '.svg',
+        jumping: false,
+        y_velocity: 0,
+        x_velocity: 0
     };
+}
+
+function addPlayerFromQueue(xPos, yPos) {
+    players[playerQueue.shift()] = {
+        x: xPos,
+        y: yPos,
+        image: Math.round(Math.random() * 30) + '.svg'
+    }
 }
