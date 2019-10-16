@@ -20,6 +20,15 @@ app.use('/css', express.static(__dirname + '/css'));
 app.get('/', function (request, response) {
     response.sendFile(path.join(__dirname, 'pages/startscherm.html'));
 });
+
+app.get('/customization', function(request, response) {
+    response.sendFile(path.join(__dirname, 'pages/customization.html'));
+});
+
+app.get('/gameover', function (request, response) {
+    response.sendFile(path.join(__dirname, 'pages/gameover.html'))
+});
+
 app.get('/overview', function (request, response) {
     response.sendFile(path.join(__dirname, 'pages/overview.html'));
 });
@@ -85,6 +94,25 @@ io.on('connection', function (socket) {
         setTimeout(startLightning, 3000);
     });
 
+    socket.on('emitWind', function () {
+        socket.emit('wind');
+
+        setInterval(function () 
+        {
+            players.forEach(player => {
+                //ergens moet
+                if (windLeft)
+                {
+                    player.angle -= 30;
+                }
+                else if (windRight)
+                {
+                    player.angle += 30;
+                }
+            })
+        },1000)
+    });
+
     socket.on('emitWarning', function () {
         socket.emit('warning');
     });
@@ -109,6 +137,8 @@ function killPlayer(socket) {
         else {
             freeSpaces.push(player.spaceId);
         }
+
+        socket.emit('gameover',player);
     }
 }
 
