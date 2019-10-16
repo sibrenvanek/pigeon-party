@@ -2,8 +2,10 @@ window.onload = function()
 {
     var startScreen = document.getElementById("start-screen");
     var customizationScreen = document.getElementById("customization-screen");
+    var gameoverScreen = document.getElementById("gameover-screen");
     var startScreenButton = document.getElementById("startscreen-button");
     var joinButton = document.getElementById("joinButton");
+    var tryagainButton = document.getElementById("tryagainButton")
 
     startScreenButton.onclick = function()
     {
@@ -24,4 +26,9 @@ window.onload = function()
         }
     }
 
+    tryagainButton.onclick = function()
+    {
+        gameoverScreen.style.display = "none";
+        customizationScreen.style.display = "block";
+    }
 }
