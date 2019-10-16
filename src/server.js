@@ -28,6 +28,10 @@ app.get('/knoppen', function (request, response) {
     response.sendFile(path.join(__dirname, 'pages/knoppen.html'));
 });
 
+app.get('/gameover', function (request, response) {
+    response.sendFile(path.join(__dirname, 'pages/gameover.html'))
+});
+
 server.listen(port, function () {
     console.log(`🚀  Starting server on port ${port}`);
 });
@@ -109,6 +113,8 @@ function killPlayer(socket) {
         else {
             freeSpaces.push(player.spaceId);
         }
+
+        socket.emit('gameover',player);
     }
 }
 

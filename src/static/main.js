@@ -7,6 +7,9 @@ window.onload = function()
     var joinButton = document.getElementById("joinButton");
     var tryagainButton = document.getElementById("tryagainButton");
     var birdSvg = document.getElementById("bird-svg");
+    var playerName = document.getElementById("playerName");
+    var playerScore = document.getElementById("playerScore");
+    var playerImage = document.getElementById("playerImage");
 
     startScreenButton.onclick = function()
     {
@@ -26,13 +29,24 @@ window.onload = function()
         }
         else
         {
+            var save = document.getElementById("inputUsername").value;
+            localStorage.setItem("inputUsername", save);
             location.href = "knoppen";
+            setTimeout(function(){
+                startScreen.style.display = "none";
+                customizationScreen.style.display = "none";
+                gameoverScreen.style.display = "block";
+            },3500);
         }
     }
 
+    playerName.innerHTML = localStorage.getItem("playerName");
+    playerScore.innerHTML = localStorage.getItem("playerScore");
+    playerImage.setAttribute('src', '../pictures/' + localStorage.getItem("playerImage"));
+
+
     tryagainButton.onclick = function()
     {
-        gameoverScreen.style.display = "none";
-        customizationScreen.style.display = "block";
+        location.href = "/";
     }
 }
