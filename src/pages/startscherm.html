@@ -4,19 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" type="text/css" href="/src/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+    <script src="../static/main.js"></script>
     <title>Document</title>
 </head>
 <body>
     <div id="start-screen">
-        <img class="startscreen-logo" alt="Logo van Pigeon Party" src=""/>
-        <button class="startscreen-button">Start</button>
+        <img class="startscreen-logo" alt="Logo van Pigeon Party" src="../pictures/Pigeon Party.png"/>
+        <div class="wrapper">
+        <button id="startscreen-button">Start</button>
+        </div>
     </div>
     <div id="customization-screen">
-        <input/>
-        <img alt="Pigeons" src=""/>
-        <button>Generate</button>
-        <button>Join</button>
+        <input id="inputUsername" class="nameField" type="text"/>
+        <img class="bird-icon" alt="Pigeons" src="../pictures/0.svg"/>
+        <div class="wrapper">
+        <button id="joinButton">Join</button>
+        </div>
     </div>
 </body>
 </html>
