@@ -85,14 +85,13 @@ io.on('connection', function (socket) {
         setTimeout(startLightning, 3000);
     });
 
-
-
     socket.on('emitWind', function () {
         socket.emit('wind');
 
         setInterval(function () 
         {
             players.forEach(player => {
+                //ergens moet
                 if (windLeft)
                 {
                     player.angle -= 30;
