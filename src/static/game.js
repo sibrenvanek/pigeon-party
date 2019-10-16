@@ -1,8 +1,10 @@
 var controller, context, loop, warningImg = '0';
 var imgWarning = document.createElement("img");
-imgWarning.src = "pictures/Warningsign.png";
 var imgWarning2 = document.createElement("img");
-imgWarning2.src = "pictures/Warningsign2.png";
+imgWarning.src = "pictures/Warningsign.svg";
+imgWarning2.src = "pictures/Warningsign2.svg";
+
+
 
 
 controller = {
@@ -103,11 +105,11 @@ socket.on('state', function (players) {
 
         if (warningImg === '1')
         {
-            context.drawImage(imgWarning, 1024, 100);
+            context.drawImage(imgWarning, 874, 185);
         }
         else if (warningImg === '2')
         {
-            context.drawImage(imgWarning2, 1024, 100);
+            context.drawImage(imgWarning2, 874, 185);
         }
         for (var id in players) {
             var player = players[id];
