@@ -8,7 +8,6 @@ var server = http.Server(app);
 var io = socketIO(server);
 
 const port = 5000;
-const maxAmountOfPlayers = 25;
 
 app.set('port', port);
 
@@ -31,23 +30,26 @@ server.listen(port, function () {
     console.log(`🚀  Starting server on port ${port}`);
 });
 
-var players = {};
-var playerQueue = [];
+let players = {};
+let playerQueue = [];
+let freeSpaces = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+let sockets = [];
+
 io.on('connection', function (socket) {
     socket.on('new player', function () {
-        const amountOfPlayers = Object.keys(players).length;
-        if (amountOfPlayers < maxAmountOfPlayers) {
-            addPlayer(socket, amountOfPlayers)
+        sockets.push(socket);
+        if (freeSpaces.length > 0) {
+            addPlayer(socket, freeSpaces.shift())
         }
         else {
             playerQueue.push(socket.id);
         }
     });
+
     socket.on('movement', function (controller) {
         var player = players[socket.id] || {};
-        
-        if (controller.up && player.jumping == false) 
-        {
+
+        if (controller.up && player.jumping == false) {
             player.y_velocity -= 20;
             player.jumping = true;
         }
@@ -57,51 +59,75 @@ io.on('connection', function (socket) {
         player.x_velocity *= 0.9;// friction
         player.y_velocity *= 0.9;// friction
         // Rechthoek op lijn laten staan
-        if (player.y > 400 - 16 - 32) 
-        {
+        if (player.y > 400 - 16 - 32) {
             player.jumping = false;
             player.y = 400 - 16 - 32;
             player.y_velocity = 0;
         }
     });
+
+    socket.on('kill', function () {
+        killPlayer(socket);
+    });
+
     socket.on('killAll', function () {
         players = {};
         playerQueue = [];
+        freeSpaces = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+    });
+
+    socket.on('startLightning', function () {
+        setTimeout(startLightning, 3000);
+    });
+
+    socket.on('disconnect', function () {
+        killPlayer(socket);
+        sockets = sockets.filter(socket2 => socket.id !== socket2.id);
     });
 });
+
+function killPlayer(socket) {
+    const player = players[socket.id];
+    if (player) {
+        const xPos = player.x;
+        const yPos = player.y;
+        delete players[socket.id];
+        if (playerQueue.length > 0) {
+            addPlayerFromQueue(xPos, yPos, player.spaceId);
+        }
+        else {
+            freeSpaces.push(player.spaceId);
+        }
+    }
+}
+
 setInterval(function () {
     io.sockets.emit('state', players);
 }, 1000 / 60);
 
-io.sockets.on('kill', function () {
-    console.log(1)
-    for (const id in players) {
-        const player = players[id];
-        if (player.y == 300) {
-            const xPos = player.x;
-            const yPos = player.y;
-            delete players[socket.id]
-            addPlayerFromQueue(xPos, yPos)
-        }
-    }
-});
-
-function addPlayer(socket, amountOfPlayers) {
-    let xPos = 100 + (amountOfPlayers * 70);
-    players[socket.id] = {
-        x: xPos,
-        y: 300,
-        image: Math.round(Math.random() * 30) + '.svg',
-        jumping: false,
-        y_velocity: 0,
-        x_velocity: 0
-    };
+function startLightning() {
+    sockets.forEach(socket => {
+        socket.emit('lightning', players);
+    });
 }
 
-function addPlayerFromQueue(xPos, yPos) {
-    players[playerQueue.shift()] = {
-        x: xPos,
-        y: yPos,
-        image: Math.round(Math.random() * 30) + '.svg'
+function addPlayer(socket, spaceId) {
+    let xPos = 100 + (spaceId * 70);
+    players[socket.id] = createPlayer(xPos, 300, Math.round(Math.random() * 30) + '.svg', false, 0, 0, spaceId);
+}
+
+function addPlayerFromQueue(xPos, yPos, spaceId) {
+    players[playerQueue.shift()] = createPlayer(xPos, yPos, Math.round(Math.random() * 30) + '.svg', false, 0, 0, spaceId);
+}
+
+function createPlayer(x, y, image, jumping, y_velocity, x_velocity, spaceId) {
+    return {
+        x,
+        y,
+        image,
+        jumping,
+        y_velocity,
+        x_velocity,
+        spaceId
     }
 }
