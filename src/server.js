@@ -101,10 +101,6 @@ function killPlayer(socket) {
     }
 }
 
-setInterval(function () {
-    io.sockets.emit('state', players);
-}, 1000 / 60);
-
 function startLightning() {
     sockets.forEach(socket => {
         socket.emit('lightning', players);
@@ -130,4 +126,27 @@ function createPlayer(x, y, image, jumping, y_velocity, x_velocity, spaceId) {
         x_velocity,
         spaceId
     }
+}
+
+startGameLoop();
+
+function startGameLoop() {
+    setInterval(function () {
+        io.sockets.emit('state', players);
+    }, 1000 / 60);
+
+    setInterval(function () {
+        const event = Math.round(Math.random() * 4);
+        if (event !== 0) {
+            io.sockets.emit('warning');
+            setTimeout(function () {
+                if (event === 1 || event === 2) {
+                    io.sockets.emit('lightning');
+                }
+                else if (event === 3 || event === 4) {
+                    io.sockets.emit('wind');
+                }
+            }, 3000);
+        }
+    }, 15000);
 }
