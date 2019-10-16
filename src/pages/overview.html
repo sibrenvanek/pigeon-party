@@ -6,7 +6,6 @@
         canvas {
             width: 2048px;
             height: 768px;
-            border: 5px solid black;
         }
     </style>
     <script src="../../socket.io/socket.io.js"></script>
@@ -16,6 +15,7 @@
     <canvas id="canvas"></canvas>
     <button type="button" onclick="killAllPlayers()">Kill All</button>
     <button type="button" onclick="startLightning()">spawn lightning</button>
+      <button type="button" onclick="emitWarning()">Warning</button>
 </body>
 <script src="../static/game.js"></script>
 
