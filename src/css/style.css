@@ -1,0 +1,103 @@
+html, body
+{
+    margin: 0;
+    padding: 0;
+    background-color: #4B5ACD;
+}
+
+#customization-screen
+{
+    display: none;
+}
+
+.startscreen-logo
+{
+    display: block;
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 40%;
+}
+
+.wrapper
+{
+    margin-top: 8em;
+    text-align: center;
+}
+
+.wrapper2
+{
+    margin-top: 15em;
+    text-align: center;
+}
+
+.wrapper3
+{
+    text-align: center;
+}
+
+#startscreen-button
+{
+    background-color: #fff;
+    border: none;
+    color: black;
+    cursor: pointer;
+    padding: 15px 45px;
+    font-size: 1.6em;
+}
+
+#joinButton
+{
+    background-color: #fff;
+    border: none;
+    color: black;
+    cursor: pointer;
+    padding: 15px 45px;
+    font-size: 1.6em;
+}
+
+.bird-icon
+{
+    display: block;
+    margin: 0 auto;
+    width: 80%;
+}
+
+.nameField
+{
+    width: 200px;
+    height: 30px;
+    font-size: 2em;
+    display: block;
+    margin: 0 auto;
+    margin-top: 15%;
+}
+
+#buttonUp
+{
+    background-color: #ffea00;
+    border: none;
+    color: black;
+    padding: 45px 55px;
+    font-size: 1.3em;
+    margin-top: -0.5em;
+}
+
+#buttonRight
+{
+    background-color: #ffea00;
+    border: none;
+    color: black;
+    padding: 45px 55px;
+    font-size: 1.3em;
+    margin-left: -0.2em;
+}
+
+#buttonLeft
+{
+    background-color: #ffea00;
+    border: none;
+    color: black;
+    padding: 45px 55px;
+    font-size: 1.3em;
+    margin-right: -0.2em;
+}

@@ -13,10 +13,12 @@ app.set('port', port);
 
 app.use('/static', express.static(__dirname + '/static'));
 
-app.use('/pictures', express.static(__dirname + '/pictures'))
+app.use('/pictures', express.static(__dirname + '/pictures'));
+
+app.use('/css', express.static(__dirname + '/css'));
 
 app.get('/', function (request, response) {
-    response.sendFile(path.join(__dirname, 'pages/index.html'));
+    response.sendFile(path.join(__dirname, 'pages/startscherm.html'));
 });
 app.get('/overview', function (request, response) {
     response.sendFile(path.join(__dirname, 'pages/overview.html'));

@@ -7,12 +7,17 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <script src="../../socket.io/socket.io.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
 </head>
 
 <body>
-    <button ontouchstart="buttonUp()" ontouchend="buttonUpEnd()" id="buttonUp">Up</button>
-    <button ontouchstart="buttonRight()" ontouchend="buttonRightEnd()" id="buttonRight">Right</button>
-    <button ontouchstart="buttonLeft()" ontouchend="buttonLeftEnd()" id="buttonLeft">Left</button>
+        <div class="wrapper2">
+        <button ontouchstart="buttonUp()" ontouchend="buttonUpEnd()" id="buttonUp">&#8593;</button>
+        </div>
+        <div class="wrapper3">
+        <button ontouchstart="buttonLeft()" ontouchend="buttonLeftEnd()" id="buttonLeft">&#8592;</button>
+        <button ontouchstart="buttonRight()" ontouchend="buttonRightEnd()" id="buttonRight">&#8594;</button>
+        </div>
 </body>
 <script src="../static/game.js"></script>
 
