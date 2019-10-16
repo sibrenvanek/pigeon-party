@@ -30,12 +30,14 @@ server.listen(port, function () {
     console.log(`🚀  Starting server on port ${port}`);
 });
 
-var players = {};
-var playerQueue = [];
-var freeSpaces = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+let players = {};
+let playerQueue = [];
+let freeSpaces = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+let sockets = [];
 
 io.on('connection', function (socket) {
     socket.on('new player', function () {
+        sockets.push(socket);
         if (freeSpaces.length > 0) {
             addPlayer(socket, freeSpaces.shift())
         }
@@ -43,6 +45,7 @@ io.on('connection', function (socket) {
             playerQueue.push(socket.id);
         }
     });
+
     socket.on('movement', function (controller) {
         var player = players[socket.id] || {};
 
@@ -64,7 +67,28 @@ io.on('connection', function (socket) {
     });
 
     socket.on('kill', function () {
-        const player = players[socket.id];
+        killPlayer(socket);
+    });
+
+    socket.on('killAll', function () {
+        players = {};
+        playerQueue = [];
+        freeSpaces = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+    });
+
+    socket.on('startLightning', function () {
+        setTimeout(startLightning, 3000);
+    });
+
+    socket.on('disconnect', function () {
+        killPlayer(socket);
+        sockets = sockets.filter(socket2 => socket.id !== socket2.id);
+    });
+});
+
+function killPlayer(socket) {
+    const player = players[socket.id];
+    if (player) {
         const xPos = player.x;
         const yPos = player.y;
         delete players[socket.id];
@@ -74,24 +98,17 @@ io.on('connection', function (socket) {
         else {
             freeSpaces.push(player.spaceId);
         }
-    })
-
-    socket.on('killAll', function () {
-        players = {};
-        playerQueue = [];
-    });
-
-    socket.on('startLightning', () => {
-        setTimeout(startLightning, 3000);
-    });
-});
+    }
+}
 
 setInterval(function () {
     io.sockets.emit('state', players);
 }, 1000 / 60);
 
 function startLightning() {
-    io.sockets.emit('lightning');
+    sockets.forEach(socket => {
+        socket.emit('lightning', players);
+    });
 }
 
 function addPlayer(socket, spaceId) {

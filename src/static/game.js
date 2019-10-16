@@ -14,33 +14,27 @@ controller = {
     }
 };
 
-function buttonUp()
-{
+function buttonUp() {
     controller.up = true;
 }
 
-function buttonUpEnd()
-{
+function buttonUpEnd() {
     controller.up = false;
 }
 
-function buttonLeft()
-{
+function buttonLeft() {
     controller.left = true;
 }
 
-function buttonLeftEnd()
-{
+function buttonLeftEnd() {
     controller.left = false
 }
 
-function buttonRight()
-{
+function buttonRight() {
     controller.right = true;
 }
 
-function buttonRightEnd()
-{
+function buttonRightEnd() {
     controller.right = false
 }
 
@@ -58,27 +52,32 @@ setInterval(function () {
 }, 1000 / 60);
 
 var canvas = document.getElementById('canvas');
-canvas.width = 2048;
-canvas.height = 768;
-var context = canvas.getContext('2d');
+var context = undefined;
+if (canvas) {
+    canvas.width = 2048;
+    canvas.height = 768;
+    context = canvas.getContext('2d');
+}
 
 socket.on('state', function (players) {
-    context.clearRect(0, 0, 2048, 768);
-    context.strokeStyle = "#202830";
-    context.lineWidth = 4;
-    context.beginPath();
-    context.moveTo(0, 424);
-    context.lineTo(2048, 424);
-    context.stroke();
+    if (context) {
+        context.clearRect(0, 0, 2048, 768);
+        context.strokeStyle = "#202830";
+        context.lineWidth = 4;
+        context.beginPath();
+        context.moveTo(0, 424);
+        context.lineTo(2048, 424);
+        context.stroke();
 
-    for (var id in players) {
-        var player = players[id];
+        for (var id in players) {
+            var player = players[id];
 
-        var img = document.createElement('img');
-        img.width = 70; img.height = 70;
-        img.src = `pictures/${player.image}`;
+            var img = document.createElement('img');
+            img.width = 70; img.height = 70;
+            img.src = `pictures/${player.image}`;
 
-        context.drawImage(img, player.x, player.y);
+            context.drawImage(img, player.x, player.y);
+        }
     }
 });
 window.addEventListener("keydown", controller.keyListener)
@@ -93,7 +92,8 @@ function startLightning() {
 }
 
 socket.on('lightning', (players) => {
-    if (players[socket.id].jumping == false) {
+    player = players[socket.id];
+    if (player && player.jumping == false) {
         socket.emit('kill');
     }
 });
