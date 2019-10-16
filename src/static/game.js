@@ -1,4 +1,6 @@
 var controller, context, loop, wind = false, warningImg = '0', name = 'test', sprite = '0.svg';
+sprite = window.localStorage.getItem("randomBirdValue");
+name = window.localStorage.getItem("inputUsername");
 var imgWarning = document.createElement("img");
 var imgWarning2 = document.createElement("img");
 imgWarning.src = "pictures/Warningsign.svg";
@@ -50,7 +52,7 @@ socket.on('message', function (data) {
 });
 
 if (!document.URL.endsWith('overview')) {
-    socket.emit('new player', name);
+    socket.emit('new player', name, sprite);
 }
 
 setInterval(function () {
@@ -211,6 +213,13 @@ socket.on('state', function (players, leaderboard) {
         }
     }
 });
+
+socket.on('gameover', function(player) {
+    window.localStorage.setItem("playerImage",player.image);
+    window.localStorage.setItem("playerName", player.name);
+    window.localStorage.setItem("playerScore",player.score);
+    window.location.href = "/gameover";
+})
 
 window.addEventListener("keydown", controller.keyListener)
 window.addEventListener("keyup", controller.keyListener);
