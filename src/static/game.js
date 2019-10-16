@@ -115,8 +115,8 @@ socket.on('state', function (players, leaderboard) {
         context.drawImage(qrcode, 945, 538)
        // context.drawImage(cloudRight, 0, 200)
         context.drawImage(cloudLeft, 1800, 180)
-        context.drawImage(cloudLeft, 1800, 180)
-        context.drawImage(cloudLeft, 1800, 180)
+        context.drawImage(cloudLeft, 1200, 180)
+        context.drawImage(cloudLeft, 600, 180)
  
 
 
