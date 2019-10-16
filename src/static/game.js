@@ -107,10 +107,10 @@ socket.on('state', function (players, leaderboard) {
         context.drawImage(qrcode, 945, 538)
 
         if (warningImg === '1') {
-            context.drawImage(imgWarning, 874, 185);
+            context.drawImage(imgWarning, 874, 100);
         }
         else if (warningImg === '2') {
-            context.drawImage(imgWarning2, 874, 185);
+            context.drawImage(imgWarning2, 874, 100);
         }
         for (var id in players) {
             var player = players[id];
