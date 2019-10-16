@@ -82,6 +82,7 @@ socket.on('state', function (players) {
 });
 window.addEventListener("keydown", controller.keyListener)
 window.addEventListener("keyup", controller.keyListener);
+sprite = window.localStorage.getItem("randomBirdValue");
 
 function killAllPlayers() {
     socket.emit('killAll');
