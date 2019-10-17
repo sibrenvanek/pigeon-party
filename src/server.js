@@ -48,6 +48,8 @@ let sockets = [];
 
 let leaderboard = [{ name: 'no player yet', score: 0 }, { name: 'no player yet', score: 0 }, { name: 'no player yet', score: 0 }];
 
+let windActive = false;
+
 io.on('connection', function (socket) {
     socket.on('new player', function (name, sprite = '0.svg') {
         sockets.push(socket);
@@ -77,6 +79,15 @@ io.on('connection', function (socket) {
             player.y = 340 - 16 - 32;
             player.y_velocity = 0;
         }
+
+        if (windActive) {
+            if (controller.left && player.angle > 0) {
+                player.angle -= 30;
+            }
+            if (controller.right && player.angle < 0) {
+                player.angle += 30;
+            }
+        }
     });
 
     socket.on('kill', function () {
@@ -95,22 +106,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('emitWind', function () {
-        socket.emit('wind');
-
-        setInterval(function () 
-        {
-            players.forEach(player => {
-                //ergens moet
-                if (windLeft)
-                {
-                    player.angle -= 30;
-                }
-                else if (windRight)
-                {
-                    player.angle += 30;
-                }
-            })
-        },1000)
+        startWind();
     });
 
     socket.on('emitWarning', function () {
@@ -169,6 +165,41 @@ function startLightning() {
     });
 }
 
+function startWind(left = false) {
+    windActive = true;
+    io.sockets.emit('wind', left);
+    changePlayersAngle(left);
+    setTimeout(function () {
+        changePlayersAngle(left);
+        setTimeout(function () {
+            changePlayersAngle(left);
+            setTimeout(function () {
+                changePlayersAngle(left);
+                setTimeout(function () {
+                    io.sockets.emit('stopWind');
+                    windActive = false;
+                    const keys = Object.keys(players);
+                    keys.forEach(key => {
+                        players[key].angle = 0;
+                    });
+                }, 100);
+            }, 1000);
+        }, 1000);
+    }, 1000);
+}
+
+function changePlayersAngle(left) {
+    const keys = Object.keys(players);
+    keys.forEach(key => {
+        if (!left) {
+            players[key].angle -= 30;
+        }
+        else if (left) {
+            players[key].angle += 30;
+        }
+    });
+}
+
 function addPlayer(socket, spaceId, name, sprite) {
     let xPos = 100 + (spaceId * 70);
     players[socket.id] = createPlayer(xPos, 300, sprite, false, 0, 0, spaceId, name);
@@ -189,6 +220,7 @@ function createPlayer(x, y, image, jumping, y_velocity, x_velocity, spaceId, nam
         x_velocity,
         spaceId,
         name,
+        angle: 0,
         startTime: Date.now()
     }
 }
@@ -201,15 +233,15 @@ function startGameLoop() {
     }, 1000 / 60);
 
     setInterval(function () {
-        const event = Math.round(Math.random() * 4);
+        let event = Math.round(Math.random() * 4);
         if (event !== 0) {
             io.sockets.emit('warning');
             setTimeout(function () {
                 if (event === 1 || event === 2) {
-                    io.sockets.emit('lightning');
+                    io.sockets.emit('lightning', players);
                 }
                 else if (event === 3 || event === 4) {
-                    io.sockets.emit('wind');
+                    startWind(event === 3);
                 }
             }, 3000);
         }

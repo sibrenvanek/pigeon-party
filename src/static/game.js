@@ -1,4 +1,4 @@
-var controller, context, loop, warningImg = '0', name = 'test', sprite = '0.svg';
+var controller, context, loop, wind = false, warningImg = '0', name = 'test', sprite = '0.svg';
 sprite = window.localStorage.getItem("randomBirdValue");
 name = window.localStorage.getItem("inputUsername");
 var imgWarning = document.createElement("img");
@@ -7,7 +7,7 @@ imgWarning.src = "pictures/Warningsign.svg";
 imgWarning2.src = "pictures/Warningsign2.svg";
 
 let drawSmallLightning = false, drawBigLightning = false;
-let drawCloudLeft = false, drawCloudRIght = false;
+let drawCloudLeft = false, drawCloudRight = false;
 controller = {
     left: false,
     right: false,
@@ -35,7 +35,7 @@ function buttonLeft() {
 }
 
 function buttonLeftEnd() {
-    controller.left = false
+    controller.left = false;
 }
 
 function buttonRight() {
@@ -43,7 +43,7 @@ function buttonRight() {
 }
 
 function buttonRightEnd() {
-    controller.right = false
+    controller.right = false;
 }
 
 var socket = io();
@@ -96,18 +96,17 @@ const plane2Img = document.createElement('img');
 plane2Img.src = 'pictures/Plane 2.svg';
 const plane3Img = document.createElement('img');
 plane3Img.src = 'pictures/Plane 3.svg';
+
 const background = document.createElement('img');
-background.src = 'pictures/Background_V2.svg';
+background.src = 'pictures/Background_V3.svg';
+
 const qrcode = document.createElement('img');
 qrcode.src = 'pictures/QR code.svg';
+
 const bigLightning = document.createElement('img');
 bigLightning.src = 'pictures/Lange Bliksem.svg';
 const smallLightning = document.createElement('img');
 smallLightning.src = 'pictures/Bliksem verticaal.svg';
-const cloudLeft = document.createElement('img');
-cloudLeft.src = 'pictures/Cloudleft.svg';
-// const cloudRight = document.createElement('img');
-// cloudRight.src = 'pictures/Cloudright.svg';
 
 const cloudLeft = document.createElement('img');
 cloudLeft.src = 'pictures/cloudLeft.svg';
@@ -119,14 +118,6 @@ socket.on('state', function (players, leaderboard) {
         context.clearRect(0, 0, 2048, 768);
         context.drawImage(background, 0, 0)
         context.drawImage(qrcode, 945, 538)
-            
-        context.drawImage(cloudLeft, 1800, 180)
-        context.drawImage(cloudLeft, 1200, 180)
-        context.drawImage(cloudLeft, 600, 180)
-    
-        context.drawImage(cloudRight, 68, 180)
-        context.drawImage(cloudRight, 668, 180)
-        context.drawImage(cloudRight, 1268, 180)
 
         if (warningImg === '1') {
             context.drawImage(imgWarning, 874, 100);
@@ -140,70 +131,86 @@ socket.on('state', function (players, leaderboard) {
             var img = document.createElement('img');
             img.src = `pictures/${player.image}`;
 
-            if (true) {
-
+            if (wind) {
                 if (player.angle === 0) {
-                    context.drawImage(img, player.x, player.y); 
+                    context.drawImage(img, player.x, player.y);
                 }
                 else if (player.angle === -30) {
                     context.translate(player.x, player.y);
                     context.rotate(player.angle * 0.0174532925);
-                    context.drawImage(img, -110, 40);
+                    context.drawImage(img, -70, -25);
                     context.rotate(-player.angle * 0.0174532925);
                     context.translate(-player.x, -player.y);
                 }
                 else if (player.angle === -60) {
                     context.translate(player.x, player.y);
                     context.rotate(player.angle * 0.0174532925);
-                    context.drawImage(img, -145, 0);
+                    context.drawImage(img, -105, -75);
                     context.rotate(-player.angle * 0.0174532925);
                     context.translate(-player.x, -player.y);
-                }
-                else if (player.angle = -90) {
-                    socket.emit('kill');
                 }
                 else if (player.angle === 30) {
                     context.translate(player.x, player.y);
                     context.rotate(player.angle * 0.0174532925);
-                    context.drawImage(img, 25, 55);
+                    context.drawImage(img, 25, -10);
                     context.rotate(-player.angle * 0.0174532925);
                     context.translate(-player.x, -player.y);
                 }
                 else if (player.angle === 60) {
                     context.translate(player.x, player.y);
                     context.rotate(player.angle * 0.0174532925);
-                    context.drawImage(img, 80, 5);
+                    context.drawImage(img, 40, -70);
                     context.rotate(-player.angle * 0.0174532925);
                     context.translate(-player.x, -player.y);
                 }
-                else if (player.angle = 90) {
-                    socket.emit('kill');
-                }
+            }
+            else {
+                context.drawImage(img, player.x, player.y);
+            }
         }
         if (drawBigLightning) {
             context.drawImage(bigLightning, 34, 325)
         }
+
         if (drawSmallLightning) {
             context.drawImage(smallLightning, -50, 325)
             context.drawImage(smallLightning, 1924, 325)
         }
-        if (drawCloudLeft){
-            context.drawImage(cloudLeft, 50, 200)
+
+        if (drawCloudLeft) {
+            context.drawImage(cloudLeft, 68, 180)
+            context.drawImage(cloudLeft, 668, 180)
+            context.drawImage(cloudLeft, 1268, 180)
         }
-        if (drawCloudRight){
-            context.drawImage(cloudRight, 1924, 200)
+
+        if (drawCloudRight) {
+            context.drawImage(cloudRight, 1800, 180)
+            context.drawImage(cloudRight, 1200, 180)
+            context.drawImage(cloudRight, 600, 180)
         }
+
         context.drawImage(plane1Img, 710, 20)
         context.drawImage(plane2Img, 15, 40)
         context.drawImage(plane3Img, 1405, 60)
+
         context.fillStyle = 'black';
-        context.font = '40px heavy_dock11'
+        context.font = '40px heavy_dock11';
+
         context.fillText(`${leaderboard[0].name}`, 750, 55, 200);
         context.fillText(`${leaderboard[1].name}`, 55, 75, 200);
         context.fillText(`${leaderboard[2].name}`, 1445, 95, 200);
         context.fillText(`${leaderboard[0].score}`, 750, 105, 200);
         context.fillText(`${leaderboard[1].score}`, 55, 125, 200);
         context.fillText(`${leaderboard[2].score}`, 1445, 145, 200);
+    }
+    const test = players[socket.id];
+    if (test) {
+        if (test.angle === -90) {
+            socket.emit('kill');
+        }
+        else if (test.angle === 90) {
+            socket.emit('kill');
+        }
     }
 });
 
@@ -230,14 +237,28 @@ socket.on('lightning', (players) => {
     setTimeout(function () {
         drawSmallLightning = false;
         drawBigLightning = true;
-        if (players) {
-            player = players[socket.id];
-            if (player && player.jumping == false) {
-                socket.emit('kill');
-            }
+        player = players[socket.id];
+        if (player && player.jumping == false) {
+            socket.emit('kill');
         }
         setTimeout(function () {
             drawBigLightning = false;
         }, 200);
     }, 2000);
+});
+
+socket.on('wind', function (left) {
+    wind = true;
+    if (left) {
+        drawCloudLeft = true;
+    }
+    else {
+        drawCloudRight = true;
+    }
+});
+
+socket.on('stopWind', function () {
+    wind = false;
+    drawCloudLeft = false;
+    drawCloudRight = false;
 });
